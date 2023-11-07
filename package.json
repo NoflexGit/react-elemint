@@ -1,0 +1,30 @@
+{
+  "name": "react-elemint",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc && cp -R ./src/templates ./dist/templates",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.1.1",
+    "inquirer": "^9.2.11",
+    "prettier": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.3",
+    "@types/inquirer": "^9.0.6",
+    "@types/node": "^20.8.10",
+    "typescript": "^5.2.2"
+  },
+  "bin": {
+    "relemint": "./dist/index.js"
+  }
+}
