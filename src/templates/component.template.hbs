@@ -1,0 +1,21 @@
+import React from 'react';
+
+{{#if isCssModule}}
+import styles from './{{name}}.module.{{cssExtension}}';
+{{else}}
+import './{{name}}.{{cssExtension}}';
+{{/if}}
+
+type {{name}}Props = {
+
+};
+
+const {{name}} = (props: {{name}}Props) => {
+  return (
+    <div className={{{className isCssModule cssClass}}}>
+      {{name}} component
+    </div>
+  );
+};
+
+export default {{name}};

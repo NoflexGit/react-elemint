@@ -5,27 +5,27 @@ import Handlebars from 'handlebars';
 import { TEMPLATES_DIR } from '../constants/index.js';
 import getExecutionPath from '../utils/getExecutionPath.js';
 
-const stylesGenerator = (opts) => {
+const componentGenerator = (opts) => {
   const __dirname = getExecutionPath();
 
   console.log(opts);
 
-  const stylesFilePath = path.join(
+  const componentFilePath = path.join(
     opts.folderPath,
-    `${opts.name}.${opts.isCssModule ? 'module.' : ''}${opts.extension}`,
+    `${opts.name}.${opts.extension}x`,
   );
 
   const componentTemplatePath = path.join(
     __dirname,
     TEMPLATES_DIR,
-    'styles.template.hbs',
+    'component.template.hbs',
   );
 
   const template = fs.readFileSync(componentTemplatePath, 'utf8');
   const templateCompile = Handlebars.compile(template);
-  const content = templateCompile({});
+  const content = templateCompile({ name: opts.name, css: false });
 
-  fs.writeFileSync(stylesFilePath, content, 'utf8');
+  fs.writeFileSync(componentFilePath, content, 'utf8');
 };
 
-export default stylesGenerator;
+export default componentGenerator;
