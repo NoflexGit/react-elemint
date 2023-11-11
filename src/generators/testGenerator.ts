@@ -7,9 +7,7 @@ import getExecutionPath from '../utils/getExecutionPath.js';
 
 const componentGenerator = (opts) => {
   const __dirname = getExecutionPath();
-
-  console.log(opts);
-
+  
   const componentFilePath = path.join(
     opts.folderPath,
     `${opts.name}.${opts.extension}x`,

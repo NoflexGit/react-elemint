@@ -2,20 +2,14 @@
 
 import inquirer from 'inquirer';
 import fs from 'fs-extra';
-import path from 'path';
 import chalk from 'chalk';
 import { program } from 'commander';
 import getFolderPath from './utils/getTargetFolderPath.js';
 import getExecutionPath from './utils/getExecutionPath.js';
-import componentGenerator from './generators/componentGenerator.js';
-import stylesGenerator from './generators/stylesGenerator.js';
-import Handlebars from 'handlebars';
-
-const generateContent = (templatePath: string, name: string): string => {
-  const template = fs.readFileSync(templatePath, 'utf8');
-  const templateCompile = Handlebars.compile(template);
-  return templateCompile({ name, css: false });
-};
+import generateComponent from './generators/componentGenerator.js';
+import generateIndex from './generators/indexGenerator.js';
+import generateStyles from './generators/stylesGenerator.js';
+import './utils/handlebarsHelpers.js';
 
 program
   .name('react-elemint')
@@ -35,35 +29,31 @@ const main = async () => {
   const { name, extension, styles: css, style_modules: cssModules } = options;
 
   const folderPath = getFolderPath(name);
-
   fs.ensureDirSync(folderPath);
 
-  componentGenerator({
+  const useCss = css !== 'none';
+
+  generateComponent({
     folderPath,
     name,
     extension,
-    isCssModule: cssModules,
+    useCssModule: cssModules,
     cssExtension: css,
-    css: css !== 'none',
+    useCss,
   });
 
-  if (css !== 'none') {
-    stylesGenerator({
+  if (useCss) {
+    generateStyles({
       folderPath,
       name,
       extension: css,
-      isCssModule: cssModules,
+      useCssModule: cssModules,
     });
   }
 
-  const indexFilePath = path.join(folderPath, `index.ts`);
-  const indexTemplatePath = path.join(
-    __dirname,
-    'templates',
-    'index.template.hbs',
-  );
-  const indexContent = generateContent(indexTemplatePath, name);
-  fs.writeFileSync(indexFilePath, indexContent, 'utf8');
+  generateIndex({
+    folderPath,
+  });
 
   console.log(
     chalk.green(`Component ${chalk.bold(name)} created successfully!`),

@@ -1,9 +1,7 @@
 import React from 'react';
+{{#if useCss}}
 
-{{#if isCssModule}}
-import styles from './{{name}}.module.{{cssExtension}}';
-{{else}}
-import './{{name}}.{{cssExtension}}';
+{{{includeStyles useCssModules cssExtension}}}
 {{/if}}
 
 type {{name}}Props = {
@@ -12,9 +10,15 @@ type {{name}}Props = {
 
 const {{name}} = (props: {{name}}Props) => {
   return (
+    {{#if useCss}}
     <div className={{{className isCssModule cssClass}}}>
       {{name}} component
     </div>
+    {{else}}
+    <div>
+      {{name}} component
+    </div>
+    {{/if}}
   );
 };
 

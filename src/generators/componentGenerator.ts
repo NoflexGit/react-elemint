@@ -1,41 +1,44 @@
-import fs from 'fs';
+import BaseGenerator from './baseGenerator.js';
+import writeToFile from '../utils/writeToFile.js';
+
 import path from 'path';
-import Handlebars from 'handlebars';
 
-import { TEMPLATES_DIR } from '../constants/index.js';
-import getExecutionPath from '../utils/getExecutionPath.js';
+interface IComponentGenerator {
+  generate(): string;
+}
 
-Handlebars.registerHelper('className', function (useCssModules, cssClass) {
-  if (useCssModules) {
-    return `{styles.component}`;
+export interface IComponentGeneratorOpts {
+  folderPath: string;
+  name: string;
+  extension: 'ts' | 'js';
+  useCssModule: boolean;
+  cssExtension: 'css' | 'scss';
+  useCss: boolean;
+}
+
+class ComponentGenerator extends BaseGenerator implements IComponentGenerator {
+  private opts: IComponentGeneratorOpts;
+
+  constructor(opts: any) {
+    super();
+    this.opts = opts;
   }
-  return `"component"`;
-});
 
-const componentGenerator = (opts) => {
-  const __dirname = getExecutionPath();
+  generate(): string {
+    return this.readAndCompileTemplate('component.template.hbs', {
+      ...this.opts,
+    });
+  }
+}
+const generateComponent = (opts: IComponentGeneratorOpts) => {
+  const generator = new ComponentGenerator(opts);
 
-  const componentFilePath = path.join(
+  const content = generator.generate();
+  const hookFilePath = path.join(
     opts.folderPath,
     `${opts.name}.${opts.extension}x`,
   );
-
-  const componentTemplatePath = path.join(
-    __dirname,
-    TEMPLATES_DIR,
-    'component.template.hbs',
-  );
-
-  const template = fs.readFileSync(componentTemplatePath, 'utf8');
-  const templateCompile = Handlebars.compile(template);
-  const content = templateCompile({
-    name: opts.name,
-    css: opts.css,
-    isCssModule: opts.isCssModule,
-    cssExtension: opts.cssExtension,
-  });
-
-  fs.writeFileSync(componentFilePath, content, 'utf8');
+  writeToFile(hookFilePath, content);
 };
 
-export default componentGenerator;
+export default generateComponent;

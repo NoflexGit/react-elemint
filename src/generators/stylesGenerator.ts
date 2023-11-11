@@ -4,28 +4,43 @@ import Handlebars from 'handlebars';
 
 import { TEMPLATES_DIR } from '../constants/index.js';
 import getExecutionPath from '../utils/getExecutionPath.js';
+import BaseGenerator from './baseGenerator.js';
+import writeToFile from '../utils/writeToFile.js';
 
-const stylesGenerator = (opts) => {
-  const __dirname = getExecutionPath();
+interface IStylesGenerator {
+  generate(): string;
+}
 
-  console.log(opts);
+export interface IStylesGeneratorOpts {
+  folderPath: string;
+  name: string;
+  extension: 'css' | 'scss';
+  useCssModule: boolean;
+}
 
-  const stylesFilePath = path.join(
+class StylesGenerator extends BaseGenerator implements IStylesGenerator {
+  private opts: IStylesGeneratorOpts;
+
+  constructor(opts: IStylesGeneratorOpts) {
+    super();
+    this.opts = opts;
+  }
+
+  generate(): string {
+    return this.readAndCompileTemplate('styles.template.hbs', {
+      ...this.opts,
+    });
+  }
+}
+const generateStyles = (opts: IStylesGeneratorOpts) => {
+  const generator = new StylesGenerator(opts);
+
+  const content = generator.generate();
+  const hookFilePath = path.join(
     opts.folderPath,
-    `${opts.name}.${opts.isCssModule ? 'module.' : ''}${opts.extension}`,
+    `${opts.name}.${opts.useCssModule ? 'module.' : ''}${opts.extension}`,
   );
-
-  const componentTemplatePath = path.join(
-    __dirname,
-    TEMPLATES_DIR,
-    'styles.template.hbs',
-  );
-
-  const template = fs.readFileSync(componentTemplatePath, 'utf8');
-  const templateCompile = Handlebars.compile(template);
-  const content = templateCompile({});
-
-  fs.writeFileSync(stylesFilePath, content, 'utf8');
+  writeToFile(hookFilePath, content);
 };
 
-export default stylesGenerator;
+export default generateStyles;
