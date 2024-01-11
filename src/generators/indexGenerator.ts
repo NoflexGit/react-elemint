@@ -29,7 +29,6 @@ const generateIndex = (opts: IIndexGeneratorOpts) => {
   const generator = new IndexGenerator(opts);
 
   const content = generator.generate();
-  console.log('opts.folderPath', opts.folderPath);
   const filePath = path.join(opts.folderPath, `index.ts`);
   writeToFile(filePath, content);
 };
